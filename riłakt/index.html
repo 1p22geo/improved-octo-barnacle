@@ -38,14 +38,79 @@
         function Header(props){
             return <h1 className='text-sky-500 text-2xl my-3'>{props.text}</h1>
         }
+        
+function Chairs(props) {
+  
+  let table2 = props.chairs
+  
+  return (<div className='p-5 mt-10 bg-[#E5E5E5] rounded-xl border-[#FCA311] border-b-8 '>
+    {table2.map((row, index) => {
+      return (
+        <div className='flex mx-auto justify-center' key={'row '+index}>
+          {row.map(
+            (chair, col) => {
+              if((props.row)&&(props.col)){
+                if((props.row==index)&&(props.col==col)){
+            return <div className="dropdown m-1" key={index+' seat '+col}>
+              <div className=' w-0 p-6 -mt-1 bg-emerald-400 rounded-full animate-pulse block shadow-xl'/>
+              <div className='dropdown-content translate-x-[1.25rem] -translate-y-[1.25rem]'>Is this the seat you want to buy?<br /></div>
+            </div>}}
+              
+              if (chair.user === null) {
+                switch (chair.type) {
+                  case "normal":
+                    return <div className="dropdown m-1" key={index+' seat '+col}>
+                    <div  className=' w-0 p-5 bg-sky-400 rounded-full hover:animate-pulse block'/>
+                    <div className='dropdown-content translate-x-[1.25rem] -translate-y-[1.25rem]'>Normal seat<br /><p className=' text-sm text-gray-800 font-thin'>Cost: {chair.price} zł</p><p className=' text-sm text-gray-400 font-thin'>empty</p></div>
+                  </div>
+                  case "premium":
+                    return <div className="dropdown m-1" key={index+' seat '+col}>
+                      <div  className=' w-0 p-5 bg-amber-400 rounded-full hover:animate-pulse block'/>
+                      <div className='dropdown-content translate-x-[1.25rem] -translate-y-[1.25rem]'>Premium seat<br /><p className=' text-sm text-gray-800 font-thin'>Cost: {chair.price} zł</p><p className=' text-sm text-gray-400 font-thin'>empty</p></div>
+                    </div>
+                  default:
+                    return <></>
+                }
+              }
+              else {
+                switch (chair.type) {
+                  case "normal":
+                    return <div className="dropdown m-1" key={index+' seat '+col}>
+                    <div  className=' w-0 p-5 bg-red-400 rounded-full cursor-not-allowed '/>
+                    <div className='dropdown-content translate-x-[1.25rem] -translate-y-[1.25rem]'>Normal seat<br /><p className=' text-sm text-gray-800 font-thin'>Cost: {chair.price} zł</p><p className=' text-sm text-gray-400 font-thin'>taken by {chair.user}</p></div>
+                  </div>
+                  case "premium":
+                    return <div className="dropdown m-1" key={index+' seat '+col}>
+                    <div  className=' w-0 p-5 bg-red-400 rounded-full cursor-not-allowed '/>
+                    <div className='dropdown-content translate-x-[1.25rem] -translate-y-[1.25rem]'>Premium seat<br /><p className=' text-sm text-gray-800 font-thin'>Cost: {chair.price} zł</p><p className=' text-sm text-gray-400 font-thin'>taken by {chair.user}</p></div>
+                  </div>
+                  default:
+                    return <></>
+                }
+              }
+
+            }
+          )}
+        </div>
+      )
+    })
+    }
+  </div>);
+}
+
+const table = [[{type:'premium', user:null, price:30}]]
     
       function MyApp() {
         let [state, setState] = React.useState(true)
-        setTimeout(()=>{setState(!state)}, 200)
+        let [tab, setTab] = React.useState('code')
+        const tabs = ['code', 'chairs', 'loading']
         return (
             <div className='text-center mx-auto m-2'>
                 <Header text='App header'/>
-                <div className='flex mx-auto w-3/4'>
+                <div className='inline-flex overflow-hidden mx-auto rounded-full'>
+                    {tabs.map((tab)=>{return <div className='bg-sky-400 hover:bg-sky-300 py-3 px-5 cursor-pointer my-2' onClick={()=>{setTab(tab)}}>{tab}</div>})}
+                </div>
+                <div className={`mx-auto w-3/4 ${tab=='code'?'flex':'hidden'}`}>
                     <div className=' w-1/2 bg-sky-500 p-2'>
                         <div className='bg-white p-2'>
                             <Header text='Write code here'/>
@@ -64,6 +129,22 @@
                             </div>
                     </div>
                 </div>
+                <div className={`mx-auto w-3/4  ${tab=='chairs'?'flex':'hidden'}`}>
+                    <div className=' w-full bg-sky-500 p-2'>
+                        <div className='bg-white p-2'>
+                            <Header text='Cinema chairs'/>
+                            <Chairs chairs={table}/>
+                        </div>
+                    </div>
+                </div>
+                <div className={`mx-auto w-3/4  ${tab=='loading'?'flex':'hidden'}`}>
+                    <div className=' w-full bg-sky-500 p-2'>
+                        <div className='bg-white p-2'>
+                            <Header text='Loading screen'/>
+                            
+                        </div>
+                    </div>
+                </div>
             </div>
         );
       }
@@ -79,18 +160,5 @@
       root.render(<MyApp />);
 
     </script>
-    <!--
-      Note: this page is a great way to try React but it's not suitable for production.
-      It slowly compiles JSX with Babel in the browser and uses a large development build of React.
-
-      Read this section for a production-ready setup with JSX:
-      https://reactjs.org/docs/add-react-to-a-website.html#add-jsx-to-a-project
-
-      In a larger project, you can use an integrated toolchain that includes JSX instead:
-      https://reactjs.org/docs/create-a-new-react-app.html
-
-      You can also use React without JSX, in which case you can remove Babel:
-      https://reactjs.org/docs/react-without-jsx.html
-    -->
   </body>
 </html>
